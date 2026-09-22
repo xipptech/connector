@@ -44,10 +44,6 @@ class ComponentMixin:
                     cls.env.context, components_registry=cls._components_registry
                 )
 
-    # pylint: disable=W8106
-    def setUp(self):
-        self.setUpComponentRegistryReady()
-
     def setUpComponentRegistryReady(self):
         # should be ready only during tests, never during installation
         # of addons
@@ -72,16 +68,9 @@ class TransactionComponentCase(common.TransactionCase, ComponentMixin):
         super().setUpClass()
         cls.setUpComponent()
 
-    # pylint: disable=W8106
     def setUp(self):
-        # resolve an inheritance issue (common.TransactionCase does not call
-        # super)
-        common.TransactionCase.setUp(self)
-        ComponentMixin.setUp(self)
-        # There's no env on setUpClass of TransactionCase, must do it here.
-        self.env.context = dict(
-            self.env.context, components_registry=self._components_registry
-        )
+        super().setUp()
+        self.setUpComponentRegistryReady()
 
 
 class ComponentRegistryCase:
